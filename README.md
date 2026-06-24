@@ -124,7 +124,7 @@ lib/
 
 | Dokumen | Link |
 |---------|------|
-| 📘 User Guide | *Menyusul* |
+| 📘 User Guide | [Download PDF](https://drive.google.com/file/d/1obTTjqjNEa90zDH8pmakdq8ZMTkkvknY/view?usp=sharing) |
 | 📐 UML Diagrams (APPL) | [Download PDF](https://drive.google.com/file/d/16yh5spR06qp6fMkeIMKSiF4Z6tvOAoV-/view?usp=sharing) |
 | 🎨 Figma Design | [Open in Figma](https://www.figma.com/make/gy9RAk5Z3E8Ok2muvBLPL3/Landing-page-design?t=Zs60uOBNHtD5dP2n-20&fullscreen=1) |
 | 🌐 Web Demo | [Open Web App](http://38.47.94.194/tif2/pm/) |
