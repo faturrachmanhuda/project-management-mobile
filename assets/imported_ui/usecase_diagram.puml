@@ -1,0 +1,105 @@
+@startuml
+
+left to right direction
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor LightBlue
+  BorderColor DarkBlue
+  ArrowColor DarkBlue
+}
+
+actor pm
+
+rectangle System {
+
+  ' === Landing & Auth ===
+  usecase "landing page" as UC_landing
+  usecase "about" as UC_about
+  usecase "login/register" as UC_login
+
+  ' === Daftar Proyek & fitur extend-nya ===
+  usecase "Daftar Proyek" as UC_daftar_proyek
+  usecase "logout" as UC_logout
+  usecase "Search Proyek" as UC_search_proyek
+  usecase "Edit Profil" as UC_edit_profil
+  usecase "Hapus Proyek" as UC_hapus_proyek
+  usecase "Cetak Laporan\n(semua proyek)" as UC_cetak_all
+  usecase "Edit Proyek" as UC_edit_proyek
+  usecase "Tutup Proyek" as UC_tutup_proyek
+  usecase "Buat Proyek" as UC_buat_proyek
+  usecase "Grafik" as UC_grafik
+  usecase "Laporan Tugas" as UC_laporan_tugas
+
+  ' === Daftar Pekerjaan & fitur extend-nya ===
+  usecase "Daftar Pekerjaan" as UC_daftar_pekerjaan
+  usecase "Buat Pekerjaan" as UC_buat_pekerjaan
+  usecase "Edit Pekerjaan" as UC_edit_pekerjaan
+  usecase "Hapus Pekerjaan" as UC_hapus_pekerjaan
+  usecase "Grafik Timeline" as UC_grafik_timeline
+  usecase "Cetak Laporan\n(proyek)" as UC_cetak_proyek
+  usecase "Search Pekerjaan" as UC_search_pekerjaan
+
+  ' === Daftar Aktivitas & fitur extend-nya ===
+  usecase "Daftar Aktivitas" as UC_daftar_aktivitas
+  usecase "Buat Aktivitas" as UC_buat_aktivitas
+  usecase "Hapus Aktivitas" as UC_hapus_aktivitas
+  usecase "toggle status\naktivitas" as UC_toggle
+  usecase "Evaluasi" as UC_evaluasi
+  usecase "Rencana\nTambahan" as UC_rencana
+  usecase "Search Aktivitas" as UC_search_aktivitas
+  usecase "Edit Aktivitas" as UC_edit_aktivitas
+  usecase "Upload\nInformasi" as UC_upload
+
+}
+
+' === Relasi actor ===
+pm --> UC_landing
+
+' === Landing page ===
+UC_landing ..> UC_about        : <<Extend>>
+UC_landing ..> UC_login        : <<Include>>
+
+' === Login -> Daftar Proyek ===
+UC_login ..> UC_daftar_proyek  : <<Include>>
+
+' === Daftar Proyek: Extend ===
+UC_daftar_proyek <.. UC_logout          : <<Extend>>
+UC_daftar_proyek <.. UC_search_proyek   : <<Extend>>
+UC_daftar_proyek <.. UC_edit_profil     : <<Extend>>
+UC_daftar_proyek <.. UC_hapus_proyek    : <<Extend>>
+UC_daftar_proyek <.. UC_cetak_all       : <<Extend>>
+UC_daftar_proyek <.. UC_edit_proyek     : <<Extend>>
+
+' === Daftar Proyek: Include ===
+UC_daftar_proyek ..> UC_buat_proyek     : <<Include>>
+UC_daftar_proyek ..> UC_grafik          : <<Include>>
+UC_daftar_proyek ..> UC_laporan_tugas   : <<Include>>
+UC_daftar_proyek ..> UC_daftar_pekerjaan : <<Include>>
+
+' === Edit Proyek: Extend ===
+UC_edit_proyek <.. UC_tutup_proyek      : <<Extend>>
+
+' === Daftar Pekerjaan: Extend ===
+UC_daftar_pekerjaan <.. UC_buat_pekerjaan  : <<Extend>>
+UC_daftar_pekerjaan <.. UC_edit_pekerjaan  : <<Extend>>
+UC_daftar_pekerjaan <.. UC_hapus_pekerjaan : <<Extend>>
+UC_daftar_pekerjaan <.. UC_search_pekerjaan : <<Extend>>
+
+' === Daftar Pekerjaan: Include ===
+UC_daftar_pekerjaan ..> UC_grafik_timeline  : <<Include>>
+UC_daftar_pekerjaan ..> UC_cetak_proyek     : <<Include>>
+UC_daftar_pekerjaan ..> UC_daftar_aktivitas : <<Include>>
+
+' === Daftar Aktivitas: Extend ===
+UC_daftar_aktivitas <.. UC_buat_aktivitas   : <<Extend>>
+UC_daftar_aktivitas <.. UC_hapus_aktivitas  : <<Extend>>
+UC_daftar_aktivitas <.. UC_toggle           : <<Extend>>
+UC_daftar_aktivitas <.. UC_evaluasi         : <<Extend>>
+UC_daftar_aktivitas <.. UC_rencana          : <<Extend>>
+UC_daftar_aktivitas <.. UC_search_aktivitas : <<Extend>>
+UC_daftar_aktivitas <.. UC_edit_aktivitas   : <<Extend>>
+
+' === Daftar Aktivitas: Include ===
+UC_daftar_aktivitas ..> UC_upload           : <<Include>>
+
+@enduml

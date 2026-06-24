@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% block title %}Work Detail - ProManage{% endblock %}
+{% block content %}
+<div id="work-detail-page" class="min-h-screen bg-gray-50 pb-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3"><button onclick="history.back()" class="text-gray-600 hover:text-gray-900"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h1 id="work-name" class="text-3xl font-bold text-gray-900">Loading...</h1></div>
+            <button onclick="openEditWorkModal()" class="inline-flex items-center gap-2 bg-white border border-gray-200 hover:border-red-800 text-gray-700 hover:text-red-800 px-4 py-2 rounded-lg font-bold transition-all shadow-sm"><i data-lucide="edit-3" class="w-4 h-4"></i>Edit Pekerjaan</button>
+        </div>
+        <div class="bg-white rounded-xl p-6 shadow-sm mb-6"><div class="grid grid-cols-2 gap-6"><div><p class="text-sm text-gray-600 mb-1">Lokasi</p><p id="work-location" class="font-medium text-gray-900">-</p></div><div><p class="text-sm text-gray-600 mb-1">Tanggal Mulai</p><p id="work-start" class="font-medium text-gray-900">-</p></div><div><p class="text-sm text-gray-600 mb-1">Tanggal Selesai</p><p id="work-end" class="font-medium text-gray-900">-</p></div><div><p class="text-sm text-gray-600 mb-1">Pelaksana</p><p id="work-executor" class="font-medium text-gray-900">-</p></div><div><p class="text-sm text-gray-600 mb-1">Supervisor</p><p id="work-supervisor" class="font-medium text-gray-900">-</p></div></div></div>
+        <div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold text-gray-900">Aktivitas</h2><button onclick="openAddActivityModal()" class="inline-flex items-center gap-2 bg-red-800 hover:bg-red-900 text-white px-4 py-2 rounded-lg font-medium transition-colors"><i data-lucide="plus" class="w-4 h-4"></i>Tambah Aktivitas</button></div>
+        <div id="activities-list" class="space-y-4"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+<!-- Modal Tambah Aktivitas -->
+<div id="add-activity-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="modal-backdrop fixed inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal('add-activity-modal')">
+    </div>
+    <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-red-800"></i>
+                    Tambah Aktivitas
+                </h3>
+                <button type="button" onclick="closeModal('add-activity-modal')" class="text-gray-400 hover:text-gray-600 transition-colors p-1.5 rounded-lg hover:bg-gray-100">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form class="p-8 space-y-4" onsubmit="handleActivitySubmit(event)">
+                <input type="hidden" id="target-work-id">
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Nama Aktivitas *</label><input
+                        type="text" id="new-activity-name" required
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent text-sm transition-all focus:ring-2 focus:ring-red-800"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-bold text-gray-700 mb-1">Waktu</label><input type="text"
+                            id="new-activity-time" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent text-sm transition-all">
+                    </div>
+                    <div><label class="block text-sm font-bold text-gray-700 mb-1">Pelaksana</label><input type="text"
+                            id="new-activity-executor" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent text-sm transition-all">
+                    </div>
+                </div>
+                <div class="flex gap-4 pt-4"><button type="button" onclick="closeModal('add-activity-modal')"
+                        class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm">Batal</button><button type="submit"
+                        class="flex-1 px-4 py-2.5 bg-red-800 text-white rounded-lg font-medium hover:bg-red-900 transition-colors flex items-center justify-center gap-2 text-sm">Tambah</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Aktivitas -->
+<div id="edit-activity-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="modal-backdrop fixed inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal('edit-activity-modal')"></div>
+    <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i data-lucide="edit-3" class="w-5 h-5 text-red-800"></i>
+                    Edit Aktivitas
+                </h3>
+                <button type="button" onclick="closeModal('edit-activity-modal')" class="text-gray-400 hover:text-gray-600 transition-colors p-1.5 rounded-lg hover:bg-gray-100">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form class="p-8 space-y-4" onsubmit="submitEditActivity(event)">
+                <input type="hidden" id="edit-activity-id">
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Nama Aktivitas *</label><input type="text" id="edit-activity-name" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent text-sm transition-all focus:ring-2 focus:ring-red-800"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-bold text-gray-700 mb-1">Waktu</label><input type="text" id="edit-activity-time" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent text-sm transition-all"></div>
+                    <div><label class="block text-sm font-bold text-gray-700 mb-1">Pelaksana</label><input type="text" id="edit-activity-executor" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent text-sm transition-all"></div>
+                </div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Evaluasi</label><textarea id="edit-activity-evaluation" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent text-sm transition-all focus:ring-2 focus:ring-red-800"></textarea></div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Rencana Tambahan</label><textarea id="edit-activity-plan" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent text-sm transition-all focus:ring-2 focus:ring-red-800"></textarea></div>
+                <div class="flex gap-4 pt-4"><button type="button" onclick="closeModal('edit-activity-modal')" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm">Batal</button><button type="submit" class="flex-1 px-4 py-2.5 bg-red-800 text-white rounded-lg font-medium hover:bg-red-900 transition-colors flex items-center justify-center gap-2 text-sm">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block content %}
+<div id="work-detail-page" class="min-h-screen bg-gray-50 pb-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3"><button onclick="history.back()" class="text-gray-600 hover:text-gray-900"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h1 id="work-name" class="text-3xl font-bold text-gray-900">Loading...</h1></div>
+            <button onclick="openEditWorkModal()" class="inline-flex items-center gap-2 bg-white border border-gray-200 hover:border-red-800 text-gray-700 hover:text-red-800 px-4 py-2 rounded-lg font-bold transition-all shadow-sm"><i data-lucide="edit-3" class="w-4 h-4"></i>Edit Pekerjaan</button>
+        </div>
+        <div class="bg-white rounded-xl p-6 shadow-sm mb-6"><div class="grid grid-cols-2 gap-6"><div><p class="text-sm text-gray-600 mb-1">Lokasi</p><p id="work-location" class="font-medium text-gray-900">-</p></div><div><p class="text-sm text-gray-600 mb-1">Tanggal Mulai</p><p id="work-start" class="font-medium text-gray-900">-</p></div><div><p class="text-sm text-gray-600 mb-1">Tanggal Selesai</p><p id="work-end" class="font-medium text-gray-900">-</p></div><div><p class="text-sm text-gray-600 mb-1">Pelaksana</p><p id="work-executor" class="font-medium text-gray-900">-</p></div><div><p class="text-sm text-gray-600 mb-1">Supervisor</p><p id="work-supervisor" class="font-medium text-gray-900">-</p></div></div></div>
+        <div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold text-gray-900">Aktivitas</h2><button onclick="openAddActivityModal()" class="inline-flex items-center gap-2 bg-red-800 hover:bg-red-900 text-white px-4 py-2 rounded-lg font-medium transition-colors"><i data-lucide="plus" class="w-4 h-4"></i>Tambah Aktivitas</button></div>
+        <div id="activities-list" class="space-y-4"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+<!-- Modal Tambah Aktivitas -->
+<div id="add-activity-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="modal-backdrop fixed inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal('add-activity-modal')"></div>
+    <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+            <div class="px-8 py-6 border-b border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900">Tambah Aktivitas</h3>
+            </div>
+            <form class="p-8 space-y-4" onsubmit="handleActivitySubmit(event)">
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Nama Aktivitas *</label><input type="text" id="new-activity-name" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-red-800"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-bold text-gray-700 mb-1">Waktu</label><input type="text" id="new-activity-time" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                    <div><label class="block text-sm font-bold text-gray-700 mb-1">Pelaksana</label><input type="text" id="new-activity-executor" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                </div>
+                <div class="flex gap-4 pt-4"><button type="button" onclick="closeModal('add-activity-modal')" class="flex-1 px-6 py-3 border rounded-lg font-bold">Batal</button><button type="submit" class="flex-1 px-6 py-3 bg-red-800 text-white rounded-lg font-bold">Tambah</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Pekerjaan -->
+<div id="edit-work-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="modal-backdrop fixed inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal('edit-work-modal')"></div>
+    <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden">
+            <div class="px-8 py-6 border-b border-gray-100">
+                <h3 class="text-2xl font-bold text-gray-900">Edit Pekerjaan</h3>
+            </div>
+            <form class="p-8 space-y-4" onsubmit="submitEditWork(event)">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2"><label class="block text-sm font-bold text-gray-700 mb-1">Nama Pekerjaan *</label><input type="text" id="edit-work-name" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-red-800"></div>
+                    <div class="col-span-2"><label class="block text-sm font-bold text-gray-700 mb-1">Deskripsi *</label><textarea id="edit-work-description" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-red-800"></textarea></div>
+                    <div><label class="block text-sm font-bold text-gray-700 mb-1">Tempat *</label><input type="text" id="edit-work-location" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                    <div><label class="block text-sm font-bold text-gray-700 mb-1">Mulai</label><input type="date" id="edit-work-start" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                    <div><label class="block text-sm font-bold text-gray-700 mb-1">Selesai</label><input type="date" id="edit-work-end" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                    <div><label class="block text-sm font-bold text-gray-700 mb-1">Pelaksana</label><input type="text" id="edit-work-executor" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                    <div><label class="block text-sm font-bold text-gray-700 mb-1">Supervisor</label><input type="text" id="edit-work-supervisor" required class="w-full px-4 py-2 border rounded-lg outline-none"></div>
+                </div>
+                <div class="flex gap-4 pt-4"><button type="button" onclick="closeModal('edit-work-modal')" class="flex-1 px-6 py-3 border rounded-lg font-bold">Batal</button><button type="submit" class="flex-1 px-6 py-3 bg-red-800 text-white rounded-lg font-bold">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}<script>
+const workId = '{{ work_id }}';
+let work = null;
+let activities = [];
+async function loadWorkDetail() { if (!isAuthenticated()) { window.location.href = '/'; return; } try { const [workRes, activitiesRes] = await Promise.all([ apiRequest(`/works/${workId}/`), apiRequest(`/activities/by_work/?work_id=${workId}`) ]); work = await workRes.json(); activities = await activitiesRes.json(); renderWork(); renderActivities(); } catch (error) { showToast('Gagal memuat data pekerjaan', 'error'); } }
+function renderWork() { document.getElementById('work-name').textContent = work.name; document.getElementById('work-location').textContent = work.location; document.getElementById('work-start').textContent = work.start_date; document.getElementById('work-end').textContent = work.end_date; document.getElementById('work-executor').textContent = work.executor; document.getElementById('work-supervisor').textContent = work.supervisor; }
+function renderActivities() { const list = document.getElementById('activities-list'); if (activities.length === 0) { list.innerHTML = '<div class="text-center py-10"><p class="text-gray-600">Belum ada aktivitas</p></div>'; return; } list.innerHTML = activities.map(a => `<div class="bg-white rounded-xl p-6 shadow-sm"><div class="flex justify-between items-start mb-3"><div><h3 class="text-lg font-bold text-gray-900">${a.name}</h3><p class="text-sm text-gray-600">Pelaksana: ${a.executor} | Waktu: ${a.execution_time}</p></div><span class="px-3 py-1 rounded-full text-xs font-medium ${a.done ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}">${a.done ? 'Selesai' : 'Belum Selesai'}</span></div>${a.evaluation ? `<div class="mt-3 p-3 bg-blue-50 rounded-lg"><p class="text-sm font-medium text-gray-900 mb-1">Evaluasi:</p><p class="text-sm text-gray-700">${a.evaluation}</p></div>` : ''}</div>`).join(''); lucide.createIcons(); }
+function openAddActivityModal() { document.getElementById('add-activity-modal').classList.remove('hidden'); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+async function handleActivitySubmit(e) {
+    e.preventDefault();
+    const body = { work_id: workId, name: document.getElementById('new-activity-name').value, execution_time: document.getElementById('new-activity-time').value, executor: document.getElementById('new-activity-executor').value };
+    const res = await apiRequest('/activities/', { method: 'POST', body: JSON.stringify(body) });
+    if (res.ok) { 
+        closeModal('add-activity-modal'); 
+        loadWorkDetail(); 
+        showToast('Aktivitas berhasil ditambahkan');
+        e.target.reset();
+    } else {
+        const data = await res.json();
+        showToast(data.error || 'Gagal menambahkan aktivitas', 'error');
+    }
+}
+
+function openEditWorkModal() {
+    if(!work) return;
+    document.getElementById('edit-work-name').value = work.name;
+    document.getElementById('edit-work-description').value = work.description;
+    document.getElementById('edit-work-location').value = work.location;
+    document.getElementById('edit-work-start').value = work.start_date;
+    document.getElementById('edit-work-end').value = work.end_date;
+    document.getElementById('edit-work-executor').value = work.executor;
+    document.getElementById('edit-work-supervisor').value = work.supervisor;
+    document.getElementById('edit-work-modal').classList.remove('hidden');
+}
+
+async function submitEditWork(e) {
+    e.preventDefault();
+    const body = {
+        name: document.getElementById('edit-work-name').value,
+        description: document.getElementById('edit-work-description').value,
+        location: document.getElementById('edit-work-location').value,
+        start_date: document.getElementById('edit-work-start').value,
+        end_date: document.getElementById('edit-work-end').value,
+        executor: document.getElementById('edit-work-executor').value,
+        supervisor: document.getElementById('edit-work-supervisor').value
+    };
+    try {
+        const res = await apiRequest(`/works/${workId}/`, { method: 'PATCH', body: JSON.stringify(body) });
+        if(res.ok) { showToast('Pekerjaan berhasil diperbarui'); closeModal('edit-work-modal'); loadWorkDetail(); }
+        else { const data = await res.json(); showToast(data.error || 'Gagal memperbarui', 'error'); }
+    } catch(err) { showToast('Terjadi kesalahan', 'error'); }
+}
+document.addEventListener('DOMContentLoaded', loadWorkDetail);
+</script>{% endblock %}

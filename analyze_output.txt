@@ -1,0 +1,105 @@
+﻿Analyzing flutter_application_1...                              
+
+   info - Don't use 'BuildContext's across async gaps - lib\converted_promanage\pages\project_detail_page_v2.dart:76:21 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\converted_promanage\pages\project_detail_page_v2.dart:78:28 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\converted_promanage\pages\project_detail_page_v2.dart:105:28 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\converted_promanage\pages\work_detail_page.dart:110:28 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\converted_promanage\pages\work_detail_page.dart:115:28 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\converted_promanage\pages\work_detail_page.dart:149:28 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\converted_promanage\pages\work_detail_page.dart:158:28 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\converted_promanage\pages\work_detail_page.dart:170:28 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\converted_promanage\pages\work_detail_page.dart:180:28 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\converted_promanage\pages\work_detail_page.dart:185:28 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\converted_promanage\widgets\header.dart:15:51 - deprecated_member_use
+   info - The import of '../../../utils/design_tokens.dart' is unnecessary because all of the used elements are also provided by the import of '../../utils/design_tokens.dart' - lib\converted_promanage\widgets\work_card.dart:3:8 - unnecessary_import
+   info - Unnecessary use of multiple underscores - lib\converted_promanage\widgets\work_detail_card.dart:102:41 - unnecessary_underscores
+   info - Unnecessary braces in a string interpolation - lib\converted_promanage\widgets\work_detail_card.dart:156:13 - unnecessary_brace_in_string_interps
+   info - Unnecessary braces in a string interpolation - lib\converted_promanage\widgets\work_detail_card.dart:156:33 - unnecessary_brace_in_string_interps
+  error - The argument type 'DateTime' can't be assigned to the parameter type 'String'.  - lib\features\project_management\viewmodels\project_management_viewmodel.dart:78:20 - argument_type_not_assignable
+  error - The argument type 'DateTime' can't be assigned to the parameter type 'String'.  - lib\features\project_management\viewmodels\project_management_viewmodel.dart:79:18 - argument_type_not_assignable
+  error - The argument type 'DateTime' can't be assigned to the parameter type 'String'.  - lib\features\project_management\viewmodels\project_management_viewmodel.dart:104:20 - argument_type_not_assignable
+  error - The argument type 'DateTime' can't be assigned to the parameter type 'String'.  - lib\features\project_management\viewmodels\project_management_viewmodel.dart:105:18 - argument_type_not_assignable
+  error - The argument type 'DateTime' can't be assigned to the parameter type 'String'.  - lib\features\project_management\viewmodels\project_management_viewmodel.dart:126:24 - argument_type_not_assignable
+  error - The method 'toLocal' isn't defined for the type 'String' - lib\features\project_management\views\project_management_page.dart:114:67 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\main.dart:279:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\main.dart:283:57 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\main.dart:298:53 - deprecated_member_use
+   info - Angle brackets will be interpreted as HTML - lib\services\form_draft_service.dart:8:21 - unintended_html_in_doc_comment
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\utils\toast_helper.dart:98:49 - deprecated_member_use
+  error - The getter 'daftarKegiatanTerfilter' isn't defined for the type 'KegiatanViewModel' - lib\view\aktivitas_pantau_view.dart:132:31 - undefined_getter
+  error - The getter 'daftarKegiatanTerfilter' isn't defined for the type 'KegiatanViewModel' - lib\view\aktivitas_pantau_view.dart:135:42 - undefined_getter
+  error - The method 'perbaruiKegiatan' isn't defined for the type 'ActivitiesViewModel' - lib\view\aktivitas_pantau_view.dart:325:42 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\aktivitas_pantau_view.dart:441:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\auth_dialog.dart:252:41 - deprecated_member_use
+  error - The getter 'daftarKegiatanTerfilter' isn't defined for the type 'KegiatanViewModel' - lib\view\bikin_aktivitas_view.dart:453:18 - undefined_getter
+  error - The getter 'daftarKegiatanTerfilter' isn't defined for the type 'KegiatanViewModel' - lib\view\bikin_aktivitas_view.dart:464:22 - undefined_getter
+  error - The getter 'daftarKegiatanTerfilter' isn't defined for the type 'KegiatanViewModel' - lib\view\bikin_aktivitas_view.dart:579:24 - undefined_getter
+  error - The method 'hapusKegiatan' isn't defined for the type 'ActivitiesViewModel' - lib\view\bikin_aktivitas_view.dart:873:18 - undefined_method
+  error - The method 'perbaruiKegiatan' isn't defined for the type 'ActivitiesViewModel' - lib\view\bikin_aktivitas_view.dart:1353:44 - undefined_method
+  error - The method 'tambahKegiatan' isn't defined for the type 'ActivitiesViewModel' - lib\view\bikin_aktivitas_view.dart:1358:44 - undefined_method
+   info - Constructors for public widgets should have a named 'key' parameter - lib\view\bikin_aktivitas_view.dart:1399:9 - use_key_in_widget_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\bikin_aktivitas_view.dart:1420:46 - deprecated_member_use
+  error - The method 'perbaruiKegiatan' isn't defined for the type 'ActivitiesViewModel' - lib\view\bikin_aktivitas_view.dart:1568:42 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\bikin_aktivitas_view.dart:1622:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\bikin_aktivitas_view.dart:1739:55 - deprecated_member_use
+  error - The method 'perbaruiKegiatan' isn't defined for the type 'ActivitiesViewModel' - lib\view\bikin_aktivitas_view.dart:1848:43 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\bikin_aktivitas_view.dart:1890:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\bikin_aktivitas_view.dart:1895:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\bikin_aktivitas_view.dart:1948:50 - deprecated_member_use
+  error - The method 'perbaruiKegiatan' isn't defined for the type 'ActivitiesViewModel' - lib\view\bikin_aktivitas_view.dart:2103:40 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\bikin_aktivitas_view.dart:2265:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\bikin_aktivitas_view.dart:2266:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\bikin_aktivitas_view.dart:2273:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\bikin_aktivitas_view.dart:2288:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\bikin_aktivitas_view.dart:2333:42 - deprecated_member_use
+warning - Unused import: '../models/modelbikinproyek.dart' - lib\view\bikin_pekerjaan.dart:5:8 - unused_import
+warning - Unused import: 'project_detail_page.dart' - lib\view\bikin_pekerjaan.dart:15:8 - unused_import
+warning - The value of the field '_maroonLight' isn't used - lib\view\bikin_pekerjaan.dart:37:22 - unused_field
+warning - The value of the field '_slateLight' isn't used - lib\view\bikin_pekerjaan.dart:39:22 - unused_field
+   info - Don't use 'BuildContext's across async gaps - lib\view\bikin_pekerjaan.dart:53:54 - use_build_context_synchronously
+warning - The declaration '_downloadFile' isn't referenced - lib\view\bikin_pekerjaan.dart:79:16 - unused_element
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\bikin_pekerjaan.dart:320:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\bikin_pekerjaan.dart:327:74 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\gantt_chart_widget.dart:158:62 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\pekerjaan_view.dart:91:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\project_detail_page.dart:472:45 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\view\project_detail_page.dart:544:24 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\view\project_detail_page.dart:545:49 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\view\project_detail_page.dart:546:48 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\view\project_detail_page.dart:547:12 - curly_braces_in_flow_control_structures
+warning - The declaration '_projectData' isn't referenced - lib\view\project_detail_page.dart:1413:23 - unused_element
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\project_detail_page.dart:1517:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\project_detail_page.dart:2423:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\proyek_dashboard_chart.dart:267:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\proyek_dashboard_chart.dart:588:46 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\view\task_report_page.dart:112:11 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\view\task_report_page.dart:121:13 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\task_report_page.dart:730:29 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\task_report_page.dart:799:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\task_report_page.dart:1155:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\task_report_page.dart:1158:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\view_project_page.dart:246:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\view_project_page.dart:257:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\view_project_page.dart:269:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\view_project_page.dart:286:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\view_project_page.dart:313:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\view\view_project_page.dart:363:35 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\view\view_project_page.dart:537:24 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\view\view_project_page.dart:538:49 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\view\view_project_page.dart:539:48 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\view\view_project_page.dart:540:12 - curly_braces_in_flow_control_structures
+   info - Unnecessary braces in a string interpolation - lib\view\view_project_page.dart:571:31 - unnecessary_brace_in_string_interps
+warning - The value of the field '_judulProyek' isn't used - lib\viewmodel\activity_view_model.dart:37:10 - unused_field
+   info - Unnecessary override - lib\viewmodel\job_view_model.dart:16:8 - unnecessary_overrides
+   info - Unnecessary use of multiple underscores - lib\widgets\app_header.dart:97:53 - unnecessary_underscores
+   info - Don't use 'BuildContext's across async gaps - lib\widgets\app_header.dart:116:59 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\widgets\app_header.dart:119:69 - use_build_context_synchronously
+   info - Can't use a relative path to import a library in 'lib' - test\widget_test.dart:3:8 - avoid_relative_lib_imports
+
+flutter : 95 issues found. (ran in 9.4s)
+At line:1 char:95
++ ... project\flutter_application_1"; flutter analyze --no-pub 2>&1 | Out-F ...
++                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (95 issues found. (ran in 9.4s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

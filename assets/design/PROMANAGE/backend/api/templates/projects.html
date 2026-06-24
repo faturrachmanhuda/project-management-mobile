@@ -1,0 +1,1506 @@
+{% extends 'base.html' %}
+{% block title %}Projects - ProManage{% endblock %}
+
+{% block extra_css %}
+<style>
+    .step-active {
+        color: #B91C1C;
+    }
+
+    .step-active .step-num {
+        background-color: #B91C1C;
+        color: white;
+        border-color: #B91C1C;
+    }
+
+    .step-completed {
+        color: #B91C1C;
+    }
+
+    .step-completed .step-num {
+        background-color: #B91C1C;
+        color: white;
+        border-color: #B91C1C;
+    }
+
+    .step-inactive {
+        color: #9CA3AF;
+    }
+
+    .step-inactive .step-num {
+        background-color: #E5E7EB;
+        color: #9CA3AF;
+        border-color: transparent;
+    }
+
+    #create-project-modal .overflow-y-auto::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #create-project-modal .overflow-y-auto::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    #create-project-modal .overflow-y-auto::-webkit-scrollbar-thumb {
+        background: #ddd;
+        border-radius: 10px;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    /* Chart Card Styles */
+    .chart-card {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        border: 1px solid #f3f4f6;
+        transition: all 0.3s ease;
+    }
+
+    .chart-card:hover {
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        transform: translateY(-2px);
+    }
+    /* Skeleton Loading Animation */
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    .skeleton {
+        background-color: #f3f4f6;
+        border-radius: 0.75rem;
+    }
+
+    /* Glassmorphism */
+    .glass {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="projects-page" class="min-h-screen bg-gray-50 pb-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+            <div>
+                <h1 id="greeting-text" class="text-3xl font-black text-gray-900 tracking-tight">Memuat...</h1>
+                <p class="text-gray-500 font-medium mt-1">Kelola proyek Anda dengan <span class="text-red-800 font-bold">ProManage</span></p>
+            </div>
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <!-- Global Export Dropdown -->
+                <div class="relative inline-block text-left" id="global-export-dropdown">
+                    <button type="button" onclick="toggleGlobalExportMenu()" title="Ekspor Laporan"
+                        class="inline-flex items-center justify-center w-11 h-11 text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all shadow-sm active:scale-95">
+                        <i data-lucide="download" class="w-5 h-5 text-red-800"></i>
+                    </button>
+                    <div id="global-export-menu" class="hidden absolute right-0 z-20 mt-2 w-56 origin-top-right rounded-xl bg-white shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-100">
+                        <div class="py-2 px-1">
+                            <div class="px-3 py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50 mb-1">Pilih Format Laporan</div>
+                            <button onclick="downloadAllPdf(); toggleGlobalExportMenu();" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-800 rounded-lg w-full text-left transition-colors group">
+                                <div class="w-8 h-8 bg-red-100 text-red-700 rounded-lg flex items-center justify-center group-hover:bg-red-700 group-hover:text-white transition-colors">
+                                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold">PDF Komprehensif</span>
+                                    <span class="text-[10px] text-gray-400">Semua Proyek & Aktivitas</span>
+                                </div>
+                            </button>
+                            <button onclick="downloadAllExcel(); toggleGlobalExportMenu();" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-800 rounded-lg w-full text-left transition-colors group">
+                                <div class="w-8 h-8 bg-green-100 text-green-700 rounded-lg flex items-center justify-center group-hover:bg-green-700 group-hover:text-white transition-colors">
+                                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold">Excel Portofolio</span>
+                                    <span class="text-[10px] text-gray-400">Ringkasan Data Global</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="toggleAnalytics()"
+                    class="inline-flex items-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-3 rounded-lg font-bold transition-all shadow-sm active:scale-95">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5 text-red-800"></i>
+                    Statistik
+                </button>
+                <button onclick="openCreateProjectModal()"
+                    class="inline-flex items-center gap-2 bg-red-800 hover:bg-red-900 text-white px-6 py-3 rounded-lg font-bold transition-all shadow-md active:scale-95">
+                    <i data-lucide="plus" class="w-5 h-5"></i>
+                    Buat Proyek
+                </button>
+            </div>
+        </div>
+
+        <!-- Search & Filter Bar -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="md:col-span-3 relative">
+                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                <input type="text" id="project-search" oninput="handleSearch()"
+                    placeholder="Cari proyek berdasarkan nama atau lokasi..."
+                    class="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all">
+            </div>
+            <div class="relative">
+                <i data-lucide="filter" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                <select id="status-filter" onchange="handleFilter()"
+                    class="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all appearance-none cursor-pointer">
+                    <option value="all">Semua Status</option>
+                    <option value="Aktif">Aktif</option>
+                    <option value="Selesai">Selesai</option>
+                    <option value="Tertunda">Tertunda</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Dashboard Analytics Section -->
+        <div id="dashboard-analytics" class="mb-12 animate-fadeIn hidden glass p-8 rounded-3xl shadow-xl">
+            <div class="flex items-center gap-2 mb-6">
+                <i data-lucide="layout-dashboard" class="w-6 h-6 text-red-800"></i>
+                <h2 class="text-xl font-bold text-gray-900">Analisis Manajemen Proyek</h2>
+            </div>
+            
+            <!-- Level 1: Summary Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                        <i data-lucide="layers" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Total Proyek</p>
+                        <h3 id="stat-projects" class="text-2xl font-black text-gray-900">0</h3>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
+                        <i data-lucide="briefcase" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Pekerjaan</p>
+                        <h3 id="stat-works" class="text-2xl font-black text-gray-900">0</h3>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center">
+                        <i data-lucide="check-square" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Aktivitas</p>
+                        <h3 id="stat-activities" class="text-2xl font-black text-gray-900">0</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Level 2: Distribution Charts -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="chart-card flex flex-col min-h-[300px]">
+                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Status Proyek</h3>
+                    <div class="flex-1 flex items-center justify-center">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card flex flex-col min-h-[300px]">
+                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Grafik Pekerjaan</h3>
+                    <div class="flex-1 flex items-center justify-center">
+                        <canvas id="workloadChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card flex flex-col min-h-[300px] relative">
+                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Realisasi Aktivitas</h3>
+                    <div class="flex-1 flex items-center justify-center relative">
+                        <canvas id="progressChart"></canvas>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pt-4">
+                            <span id="progress-text" class="text-3xl font-black text-gray-900">0%</span>
+                            <span class="text-[8px] text-gray-400 font-bold uppercase tracking-widest">Selesai</span>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <span id="progress-subtext" class="text-[10px] text-gray-400 font-black uppercase tracking-wider">0 dari 0 Aktivitas Selesai</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Level 3: Project Breakdown -->
+            <div class="chart-card overflow-hidden">
+                <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">Detail Progres Per Proyek</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-[10px] text-gray-400 font-black uppercase border-b border-gray-50">
+                                <th class="pb-3 pr-4">Nama Proyek</th>
+                                <th class="pb-3 pr-4">Status</th>
+                                <th class="pb-3">Progres Realisasi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="project-breakdown-body" class="text-sm">
+                            <!-- Rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Projects will be rendered here -->
+        </div>
+
+        <div id="empty-state" class="hidden text-center py-20">
+            <div class="max-w-md mx-auto">
+                <i data-lucide="folder-kanban" class="w-20 h-20 text-gray-300 mx-auto mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Belum Ada Proyek</h3>
+                <p class="text-gray-600 mb-6">Mulai kelola proyek Anda dengan membuat proyek pertama</p>
+                <button onclick="openCreateProjectModal()"
+                    class="inline-flex items-center gap-2 bg-red-800 hover:bg-red-900 text-white px-6 py-3 rounded-lg font-bold transition-all shadow-md">
+                    <i data-lucide="plus" class="w-5 h-5"></i>
+                    Buat Proyek
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+<!-- Create Project Wizard Modal -->
+<div id="create-project-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="modal-backdrop fixed inset-0" onclick="closeCreateProjectModal()"></div>
+    <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-3xl w-full flex flex-col overflow-hidden">
+            <!-- Modal Header / Stepper -->
+            <div class="px-8 pt-8 pb-6 border-b border-gray-100 shrink-0">
+                <div class="flex items-center justify-between">
+                    <!-- Step 1 -->
+                    <div id="step-1-header" class="flex items-center gap-3 flex-1 step-active">
+                        <div
+                            class="step-num w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors border-2">
+                            1</div>
+                        <span class="font-bold text-sm whitespace-nowrap">Data Proyek</span>
+                        <div class="flex-1 h-0.5 bg-gray-200 mx-4" id="line-1"></div>
+                    </div>
+                    <!-- Step 2 -->
+                    <div id="step-2-header" class="flex items-center gap-3 flex-1 step-inactive">
+                        <div
+                            class="step-num w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors border-2">
+                            2</div>
+                        <span class="font-bold text-sm whitespace-nowrap">Tambah Pekerjaan</span>
+                        <div class="flex-1 h-0.5 bg-gray-200 mx-4" id="line-2"></div>
+                    </div>
+                    <!-- Step 3 -->
+                    <div id="step-3-header" class="flex items-center gap-3 step-inactive">
+                        <div
+                            class="step-num w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors border-2">
+                            3</div>
+                        <span class="font-bold text-sm whitespace-nowrap">Tambah Aktivitas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="overflow-y-auto max-h-[65vh] px-8 py-6">
+
+                <!-- Step 1: Project Data -->
+                <div id="step-1-content">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Data Proyek</h3>
+                    <form id="project-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Proyek *</label>
+                            <input type="text" id="project-name" required
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"
+                                placeholder="Contoh: Sistem Informasi Perpustakaan">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Deskripsi *</label>
+                            <textarea id="project-description" rows="3" required
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"
+                                placeholder="Deskripsikan tujuan dan lingkup proyek"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Tempat *</label>
+                            <input type="text" id="project-location" required
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"
+                                placeholder="Lokasi pelaksanaan">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Mulai *</label>
+                                <input type="date" id="project-start-date" required
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Selesai *</label>
+                                <input type="date" id="project-end-date" required
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Pelaksana Proyek *</label>
+                                <input type="text" id="project-executor" required
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"
+                                    placeholder="Nama tim / pelaksana">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Supervisor Proyek
+                                    *</label>
+                                <input type="text" id="project-supervisor" required
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"
+                                    placeholder="Nama dosen pembimbing">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 2: Add Works -->
+                <div id="step-2-content" class="hidden">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-1">Tambah Pekerjaan</h3>
+                    <p class="text-gray-600 mb-6" id="work-project-name">Tambahkan daftar pekerjaan untuk proyek Anda
+                    </p>
+
+                    <!-- Added Works List -->
+                    <div id="added-works-container" class="mb-6 space-y-2 hidden">
+                        <h4 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Pekerjaan Ditambahkan
+                        </h4>
+                        <div id="added-works-list" class="space-y-2"></div>
+                    </div>
+
+                    <form id="work-form" class="space-y-4 bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Pekerjaan *</label>
+                            <input type="text" id="work-name"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"
+                                placeholder="Contoh: Analisis Kebutuhan">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Deskripsi *</label>
+                            <textarea id="work-description" rows="2"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"
+                                placeholder="Detail pekerjaan"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Tempat *</label>
+                                <input type="text" id="work-location"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"
+                                    placeholder="Lokasi">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Mulai *</label>
+                                <input type="date" id="work-start-date"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Selesai *</label>
+                                <input type="date" id="work-end-date"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Pelaksana *</label>
+                                <input type="text" id="work-executor"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"
+                                    placeholder="Nama pelaksana">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Supervisor *</label>
+                                <input type="text" id="work-supervisor"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"
+                                    placeholder="Nama supervisor">
+                            </div>
+                        </div>
+                        <button type="button" onclick="handleAddWork()"
+                            class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
+                            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                            Tambah Pekerjaan
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Step 3: Add Activities -->
+                <div id="step-3-content" class="hidden">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-1">Tambah Aktivitas</h3>
+                    <p class="text-gray-600 mb-6">Tambahkan aktivitas untuk setiap pekerjaan</p>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Pilih Pekerjaan *</label>
+                        <select id="select-work-for-activity" onchange="renderAddedActivities()"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"></select>
+                    </div>
+
+                    <!-- Added Activities List -->
+                    <div id="added-activities-container" class="mb-6 space-y-2 hidden">
+                        <h4 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Aktivitas Ditambahkan
+                        </h4>
+                        <div id="added-activities-list" class="space-y-2"></div>
+                    </div>
+
+                    <form id="activity-form" class="space-y-4 bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Aktivitas *</label>
+                            <input type="text" id="activity-name"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"
+                                placeholder="Contoh: Interview stakeholder">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Waktu Pelaksanaan
+                                    *</label>
+                                <input type="text" id="activity-execution-time"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"
+                                    placeholder="Contoh: 2 Jam">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Pelaksana *</label>
+                                <input type="text" id="activity-executor"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent outline-none transition-all"
+                                    placeholder="Nama pelaksana">
+                            </div>
+                        </div>
+                        <button type="button" onclick="handleAddActivity()"
+                            class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
+                            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                            Tambah Aktivitas
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-8 py-6 border-t border-gray-100 flex gap-4 bg-gray-50 shrink-0">
+                <button type="button" id="btn-back" onclick="handleBack()"
+                    class="hidden flex-1 px-6 py-3 border border-gray-300 rounded-lg font-bold text-gray-700 hover:bg-white transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                    Kembali
+                </button>
+                <button type="button" id="btn-cancel" onclick="closeCreateProjectModal()"
+                    class="flex-1 px-6 py-3 border border-gray-300 rounded-lg font-bold text-gray-700 hover:bg-white transition-all">
+                    Batal
+                </button>
+                <button type="button" id="btn-next" onclick="handleNext()"
+                    class="flex-1 px-6 py-3 bg-red-800 hover:bg-red-900 text-white rounded-lg font-bold transition-all flex items-center justify-center gap-2 shadow-md">
+                    Selanjutnya
+                    <i data-lucide="arrow-right" id="next-icon" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let projects = [];
+    let currentStep = 1;
+
+    // Wizard Data
+    let tempWorks = []; // Each work will have a tempId
+    let tempActivities = {}; // Keyed by tempId
+    let projectData = {};
+
+    const DRAFT_KEY = 'promanage_project_wizard_draft_django';
+
+    function saveDraft() {
+        const modal = document.getElementById('create-project-modal');
+        const isModalOpen = modal && !modal.classList.contains('hidden');
+        if (isModalOpen) {
+            // Real-time Step 1 Data
+            const projectDraft = {
+                name: document.getElementById('project-name').value,
+                description: document.getElementById('project-description').value,
+                location: document.getElementById('project-location').value,
+                start_date: document.getElementById('project-start-date').value,
+                end_date: document.getElementById('project-end-date').value,
+                executor: document.getElementById('project-executor').value,
+                supervisor: document.getElementById('project-supervisor').value
+            };
+
+            // Real-time Work Form data (Step 2)
+            const workDraft = {
+                name: document.getElementById('work-name').value,
+                description: document.getElementById('work-description').value,
+                location: document.getElementById('work-location').value,
+                start_date: document.getElementById('work-start-date').value,
+                end_date: document.getElementById('work-end-date').value,
+                executor: document.getElementById('work-executor').value,
+                supervisor: document.getElementById('work-supervisor').value
+            };
+
+            // Real-time Activity Form data (Step 3)
+            const activityDraft = {
+                workId: document.getElementById('select-work-for-activity').value,
+                name: document.getElementById('activity-name').value,
+                execution_time: document.getElementById('activity-execution-time').value,
+                executor: document.getElementById('activity-executor').value
+            };
+
+            const draft = {
+                currentStep,
+                tempWorks,
+                tempActivities,
+                projectData: projectDraft, // Store the most recent values
+                workDraft,
+                activityDraft
+            };
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+        }
+    }
+
+    function loadDraft() {
+        const savedDraft = localStorage.getItem(DRAFT_KEY);
+        if (savedDraft) {
+            try {
+                const draft = JSON.parse(savedDraft);
+                currentStep = draft.currentStep || 1;
+                tempWorks = draft.tempWorks || [];
+                tempActivities = draft.tempActivities || {};
+                projectData = draft.projectData || {};
+
+                const hasData = Object.values(projectData).some(v => v !== '') || tempWorks.length > 0;
+
+                if (hasData) {
+                    // Restore Step 1
+                    if (projectData.name) document.getElementById('project-name').value = projectData.name;
+                    if (projectData.description) document.getElementById('project-description').value = projectData.description;
+                    if (projectData.location) document.getElementById('project-location').value = projectData.location;
+                    if (projectData.start_date) document.getElementById('project-start-date').value = projectData.start_date;
+                    if (projectData.end_date) document.getElementById('project-end-date').value = projectData.end_date;
+                    if (projectData.executor) document.getElementById('project-executor').value = projectData.executor;
+                    if (projectData.supervisor) document.getElementById('project-supervisor').value = projectData.supervisor;
+
+                    // Restore Step 2 Form
+                    if (draft.workDraft) {
+                        const wd = draft.workDraft;
+                        if (wd.name) document.getElementById('work-name').value = wd.name;
+                        if (wd.description) document.getElementById('work-description').value = wd.description;
+                        if (wd.location) document.getElementById('work-location').value = wd.location;
+                        if (wd.start_date) document.getElementById('work-start-date').value = wd.start_date;
+                        if (wd.end_date) document.getElementById('work-end-date').value = wd.end_date;
+                        if (wd.executor) document.getElementById('work-executor').value = wd.executor;
+                        if (wd.supervisor) document.getElementById('work-supervisor').value = wd.supervisor;
+                    }
+
+                    // Restore Step 3 Form
+                    if (draft.activityDraft) {
+                        const ad = draft.activityDraft;
+                        // Wait for works to be populated before setting select
+                        setTimeout(() => {
+                            if (ad.workId) document.getElementById('select-work-for-activity').value = ad.workId;
+                        }, 100);
+                        if (ad.name) document.getElementById('activity-name').value = ad.name;
+                        if (ad.execution_time) document.getElementById('activity-execution-time').value = ad.execution_time;
+                        if (ad.executor) document.getElementById('activity-executor').value = ad.executor;
+                    }
+
+                    openCreateProjectModal(true); // Open without resetting
+                    showToast('Melanjutkan draf proyek yang belum selesai');
+                }
+            } catch (e) {
+                console.error('Error loading draft:', e);
+                localStorage.removeItem(DRAFT_KEY);
+            }
+        }
+    }
+
+    function clearDraft() {
+        localStorage.removeItem(DRAFT_KEY);
+    }
+
+    // Prevent accidental refresh
+    window.addEventListener('beforeunload', function (e) {
+        const isModalOpen = !document.getElementById('create-project-modal').classList.contains('hidden');
+        if (isModalOpen) {
+            e.preventDefault();
+            e.returnValue = ''; // Standard way to trigger the confirmation dialog
+        }
+    });
+
+    function updateGreeting() {
+        const hour = new Date().getHours();
+        let greeting = "";
+        if (hour < 11) greeting = "Selamat Pagi";
+        else if (hour < 15) greeting = "Selamat Siang";
+        else if (hour < 19) greeting = "Selamat Sore";
+        else greeting = "Selamat Malam";
+
+        const userName = localStorage.getItem('user_name') || 'Pengguna';
+        document.getElementById('greeting-text').textContent = `${greeting}, ${userName}!`;
+    }
+
+    function toggleGlobalExportMenu() {
+        const menu = document.getElementById('global-export-menu');
+        menu.classList.toggle('hidden');
+    }
+
+    // Close menu when clicking outside
+    window.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('global-export-dropdown');
+        const menu = document.getElementById('global-export-menu');
+        if (dropdown && !dropdown.contains(e.target)) {
+            menu.classList.add('hidden');
+        }
+    });
+
+    let searchQuery = "";
+    let statusFilter = "all";
+
+    function handleSearch() {
+        searchQuery = document.getElementById('project-search').value.toLowerCase();
+        renderProjects();
+    }
+
+    function handleFilter() {
+        statusFilter = document.getElementById('status-filter').value;
+        renderProjects();
+    }
+
+    function showProjectSkeletons() {
+        const grid = document.getElementById('projects-grid');
+        grid.classList.remove('hidden');
+        grid.innerHTML = Array(3).fill(0).map(() => `
+            <div class="bg-white rounded-xl p-6 border border-gray-100 animate-pulse">
+                <div class="flex justify-between mb-4">
+                    <div class="w-12 h-12 skeleton"></div>
+                    <div class="w-20 h-6 skeleton"></div>
+                </div>
+                <div class="h-6 w-3/4 skeleton mb-3"></div>
+                <div class="h-4 w-full skeleton mb-2"></div>
+                <div class="h-4 w-2/3 skeleton mb-6"></div>
+                <div class="h-20 w-full skeleton mb-4"></div>
+                <div class="flex justify-between">
+                    <div class="h-8 w-20 skeleton"></div>
+                    <div class="h-8 w-20 skeleton"></div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function loadProjects() {
+        if (!isAuthenticated()) {
+            window.location.href = '/';
+            return;
+        }
+        showProjectSkeletons();
+        try {
+            const response = await apiRequest('/projects/');
+            if (!response.ok) throw new Error('Gagal memuat projects');
+            projects = await response.json();
+            renderProjects();
+        } catch (error) {
+            showToast('Gagal memuat projects', 'error');
+        }
+    }
+
+    function toggleAnalytics() {
+        const dashboard = document.getElementById('dashboard-analytics');
+        if (dashboard.classList.contains('hidden')) {
+            dashboard.classList.remove('hidden');
+            loadDashboardStats(); // Refresh data
+            showToast('Menampilkan Statistik Analitik');
+        } else {
+            dashboard.classList.add('hidden');
+        }
+    }
+
+    async function loadDashboardStats() {
+        try {
+            const response = await apiRequest('/projects/dashboard_stats/');
+            if (!response.ok) return;
+            const stats = await response.json();
+            
+            // Perbaikan: Gunakan stats.summary.total_projects sesuai struktur backend baru
+            if (stats.summary && stats.summary.total_projects > 0) {
+                document.getElementById('dashboard-analytics').classList.remove('hidden');
+                renderDashboardCharts(stats);
+            }
+        } catch (error) {
+            console.error('Stats Error:', error);
+        }
+    }
+
+    let charts = {};
+
+    function renderDashboardCharts(stats) {
+        // Clear existing charts if any
+        Object.values(charts).forEach(chart => chart.destroy());
+
+        // Update Level 1 Summary
+        document.getElementById('stat-projects').textContent = stats.summary.total_projects;
+        document.getElementById('stat-works').textContent = stats.summary.total_works;
+        document.getElementById('stat-activities').textContent = stats.summary.total_activities;
+
+        // 1. Status Chart (Project Level) with Modern Gradients
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        const statusLabels = Object.keys(stats.portfolio.status);
+        const statusValues = Object.values(stats.portfolio.status);
+        
+        // Define premium linear gradients for status chart
+        const gradAktif = statusCtx.createLinearGradient(0, 0, 0, 200);
+        gradAktif.addColorStop(0, '#34d399'); // emerald-400
+        gradAktif.addColorStop(1, '#059669'); // emerald-600
+
+        const gradSelesai = statusCtx.createLinearGradient(0, 0, 0, 200);
+        gradSelesai.addColorStop(0, '#60a5fa'); // blue-400
+        gradSelesai.addColorStop(1, '#2563eb'); // blue-600
+
+        const gradTertunda = statusCtx.createLinearGradient(0, 0, 0, 200);
+        gradTertunda.addColorStop(0, '#fbbf24'); // amber-400
+        gradTertunda.addColorStop(1, '#d97706'); // amber-600
+
+        const statusColors = statusLabels.map(label => {
+            if (label === 'Aktif') return gradAktif;
+            if (label === 'Selesai') return gradSelesai;
+            if (label === 'Tertunda') return gradTertunda;
+            return '#e5e7eb';
+        });
+
+        charts.status = new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    data: statusValues,
+                    backgroundColor: statusColors,
+                    borderWidth: 0,
+                    hoverOffset: 12,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                cutout: '75%',
+                responsive: true,
+                maintainAspectRatio: false,
+                onClick: (event, activeElements) => {
+                    const filterSelect = document.getElementById('status-filter');
+                    if (!filterSelect) return;
+
+                    if (activeElements.length > 0) {
+                        const index = activeElements[0].index;
+                        const clickedStatus = statusLabels[index];
+                        
+                        // Toggle: if the same status is clicked, reset to "all"
+                        if (statusFilter === clickedStatus) {
+                            filterSelect.value = 'all';
+                            statusFilter = 'all';
+                            renderProjects();
+                            showToast('Menampilkan semua proyek');
+                        } else {
+                            filterSelect.value = clickedStatus;
+                            statusFilter = clickedStatus;
+                            renderProjects();
+                            showToast(`Memfilter proyek: ${clickedStatus}`);
+                        }
+                    } else {
+                        // Click on center or blank space resets the filter
+                        filterSelect.value = 'all';
+                        statusFilter = 'all';
+                        renderProjects();
+                        showToast('Menampilkan semua proyek');
+                    }
+                },
+                onHover: (event, activeElements) => {
+                    event.native.target.style.cursor = activeElements.length > 0 ? 'pointer' : 'default';
+                },
+                plugins: {
+                    legend: { 
+                        position: 'bottom', 
+                        labels: { 
+                            usePointStyle: true, 
+                            padding: 20, 
+                            font: { family: 'Inter', size: 11, weight: 'bold' },
+                            color: '#4b5563'
+                        } 
+                    }
+                }
+            }
+        });
+
+        // 2. Work Chart (Works per Project) with Stunning Rounded Gradient Bars
+        const workloadCtx = document.getElementById('workloadChart').getContext('2d');
+        const worksPerProject = stats.portfolio.works_per_project || {};
+        const workLabels = Object.keys(worksPerProject);
+        const workValues = Object.values(worksPerProject);
+
+        const gradWork = workloadCtx.createLinearGradient(0, 0, 0, 300);
+        gradWork.addColorStop(0, '#818cf8'); // indigo-400
+        gradWork.addColorStop(1, '#4f46e5'); // indigo-600
+
+        charts.workload = new Chart(workloadCtx, {
+            type: 'bar',
+            data: {
+                labels: workLabels,
+                datasets: [{
+                    data: workValues,
+                    backgroundColor: gradWork,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                    barThickness: 30
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => ` ${ctx.raw} Pekerjaan`
+                        }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { borderDash: [4, 4] } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 3. Activity Progress Chart (Activity Level) with Rounded Gauge Style
+        const progressCtx = document.getElementById('progressChart').getContext('2d');
+        document.getElementById('progress-text').textContent = stats.activities.percent + '%';
+        document.getElementById('progress-subtext').textContent = `${stats.activities.done} dari ${stats.activities.total} Aktivitas Selesai`;
+
+        const gradProgress = progressCtx.createLinearGradient(0, 0, 0, 200);
+        gradProgress.addColorStop(0, '#ef4444'); // red-500
+        gradProgress.addColorStop(1, '#b91c1c'); // red-700
+
+        charts.progress = new Chart(progressCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Selesai', 'Belum Selesai'],
+                datasets: [{
+                    data: [stats.activities.done, Math.max(0, stats.activities.total - stats.activities.done)],
+                    backgroundColor: [gradProgress, '#f3f4f6'],
+                    borderWidth: 0,
+                    borderRadius: [12, 0] // Rounded ends on the completed part
+                }]
+            },
+            options: {
+                cutout: '80%',
+                responsive: true,
+                maintainAspectRatio: false,
+                onHover: (event, activeElements) => {
+                    event.native.target.style.cursor = activeElements.length > 0 ? 'pointer' : 'default';
+                },
+                plugins: { 
+                    tooltip: { 
+                        enabled: true,
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.raw;
+                                const total = stats.activities.total;
+                                const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                return ` ${context.label}: ${value} Aktivitas (${percent}%)`;
+                            }
+                        }
+                    }, 
+                    legend: { display: false } 
+                }
+            }
+        });
+
+        // Level 3: Project Breakdown Body
+        const tableBody = document.getElementById('project-breakdown-body');
+        tableBody.innerHTML = stats.project_breakdown.map(p => `
+            <tr class="border-b border-gray-50 group hover:bg-gray-50 transition-colors">
+                <td class="py-4 pr-4 font-bold text-gray-900">${p.name}</td>
+                <td class="py-4 pr-4">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                        p.status === 'Aktif' ? 'bg-green-100 text-green-800' :
+                        p.status === 'Selesai' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'
+                    }">${p.status}</span>
+                </td>
+                <td class="py-4 w-1/3">
+                    <div class="flex items-center gap-3">
+                        <div class="flex-1 bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-red-800 h-full rounded-full" style="width: ${p.progress}%"></div>
+                        </div>
+                        <span class="text-xs font-black text-gray-900 min-w-[35px]">${p.progress}%</span>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function renderProjects() {
+        const grid = document.getElementById('projects-grid');
+        const emptyState = document.getElementById('empty-state');
+
+        // Apply Search and Filter
+        const filtered = projects.filter(p => {
+            const matchesSearch = p.name.toLowerCase().includes(searchQuery) || 
+                                 p.location.toLowerCase().includes(searchQuery);
+            const matchesFilter = statusFilter === 'all' || p.status === statusFilter;
+            return matchesSearch && matchesFilter;
+        });
+
+        if (filtered.length === 0) {
+            if (projects.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+            } else {
+                grid.classList.remove('hidden');
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center">
+                        <i data-lucide="search-x" class="w-16 h-16 text-gray-300 mx-auto mb-4"></i>
+                        <p class="text-gray-500 font-bold">Tidak ada proyek yang sesuai dengan pencarian Anda.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+            return;
+        }
+
+        grid.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+
+        grid.innerHTML = filtered.map(p => `
+            <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all border border-gray-100 group">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 bg-red-800/10 rounded-lg flex items-center justify-center text-red-800 shrink-0">
+                        <i data-lucide="folder-kanban" class="w-6 h-6"></i>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${p.status === 'Aktif' ? 'bg-green-100 text-green-800' :
+                p.status === 'Selesai' ? 'bg-blue-100 text-blue-800' :
+                    p.status === 'Tertunda' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-gray-100 text-gray-800'
+            }">${p.status}</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-800 transition-colors">${p.name}</h3>
+                <p class="text-sm text-gray-600 mb-4 line-clamp-2">${p.description}</p>
+                <div class="space-y-2 text-sm text-gray-500 mb-6">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-4 h-4"></i>
+                        ${p.location}
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                        ${p.start_date} - ${p.end_date}
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        ${p.executor}
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="mb-6 pt-4 border-t border-gray-50">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Progress</span>
+                        <span class="text-xs font-black text-red-800">${p.progress}%</span>
+                    </div>
+                    <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                        <div class="bg-red-800 h-full transition-all duration-1000" style="width: ${p.progress}%"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+                    <div class="flex items-center gap-2">
+                        <button onclick="downloadPdf('${p.id}', '${p.name}')" class="p-2 bg-red-50 hover:bg-red-100 text-red-800 rounded-lg transition-colors" title="Export PDF">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="downloadExcel('${p.id}', '${p.name}')" class="p-2 bg-green-50 hover:bg-green-100 text-green-800 rounded-lg transition-colors" title="Export Excel">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="handleDeleteProject('${p.id}', '${p.name}')" class="p-2 text-gray-300 hover:text-red-600 transition-colors" title="Hapus Proyek">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                        <a href="/projects/${p.id}" class="inline-flex items-center gap-2 text-red-800 hover:text-red-900 font-black text-xs uppercase tracking-widest">
+                            Detail
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    function openCreateProjectModal(isRestore = false) {
+        if (!isRestore) {
+            currentStep = 1;
+            resetWizardData();
+        }
+        updateWizardUI();
+        document.getElementById('create-project-modal').classList.remove('hidden');
+        lucide.createIcons();
+    }
+
+    function closeCreateProjectModal() {
+        document.getElementById('create-project-modal').classList.add('hidden');
+        resetWizardData();
+        clearDraft();
+    }
+
+    function resetWizardData() {
+        projectData = {};
+        tempWorks = [];
+        tempActivities = {};
+        document.getElementById('project-form').reset();
+        document.getElementById('work-form').reset();
+        document.getElementById('activity-form').reset();
+        renderAddedWorks();
+    }
+
+    function updateWizardUI() {
+        // Content
+        document.getElementById('step-1-content').classList.toggle('hidden', currentStep !== 1);
+        document.getElementById('step-2-content').classList.toggle('hidden', currentStep !== 2);
+        document.getElementById('step-3-content').classList.toggle('hidden', currentStep !== 3);
+
+        // Headers
+        updateStepHeader(1, 'step-1-header', 'line-1');
+        updateStepHeader(2, 'step-2-header', 'line-2');
+        updateStepHeader(3, 'step-3-header');
+
+        // Buttons
+        document.getElementById('btn-back').classList.toggle('hidden', currentStep === 1);
+        document.getElementById('btn-cancel').classList.toggle('hidden', currentStep !== 1);
+
+        const btnNext = document.getElementById('btn-next');
+
+        if (currentStep === 3) {
+            btnNext.innerHTML = 'Buat Proyek <i data-lucide="check-circle" class="w-5 h-5"></i>';
+        } else {
+            btnNext.innerHTML = 'Selanjutnya <i data-lucide="arrow-right" class="w-5 h-5"></i>';
+        }
+
+        lucide.createIcons();
+        saveDraft();
+    }
+
+    function updateStepHeader(stepNum, elementId, lineId) {
+        const el = document.getElementById(elementId);
+        const line = lineId ? document.getElementById(lineId) : null;
+
+        el.classList.remove('step-active', 'step-completed', 'step-inactive');
+        if (line) line.classList.remove('bg-red-800', 'bg-gray-200');
+
+        if (currentStep === stepNum) {
+            el.classList.add('step-active');
+            if (line) line.classList.add('bg-gray-200');
+        } else if (currentStep > stepNum) {
+            el.classList.add('step-completed');
+            if (line) line.classList.add('bg-red-800');
+        } else {
+            el.classList.add('step-inactive');
+            if (line) line.classList.add('bg-gray-200');
+        }
+    }
+
+    function handleNext() {
+        if (currentStep === 1) {
+            if (validateStep1()) {
+                currentStep = 2;
+                document.getElementById('work-project-name').textContent = `Tambahkan daftar pekerjaan untuk proyek "${projectData.name}"`;
+                updateWizardUI();
+            }
+        } else if (currentStep === 2) {
+            if (tempWorks.length === 0) {
+                showToast('Minimal tambahkan 1 pekerjaan!', 'error');
+                return;
+            }
+            currentStep = 3;
+            populateWorkSelect();
+            updateWizardUI();
+        } else if (currentStep === 3) {
+            const incomplete = tempWorks.some(w => !tempActivities[w.tempId] || tempActivities[w.tempId].length === 0);
+            if (incomplete) {
+                showToast('Setiap pekerjaan harus memiliki minimal 1 aktivitas!', 'error');
+                return;
+            }
+            submitFullProject();
+        }
+    }
+
+    function handleBack() {
+        if (currentStep > 1) {
+            currentStep--;
+            updateWizardUI();
+        }
+    }
+
+    function validateStep1() {
+        const name = document.getElementById('project-name').value;
+        const description = document.getElementById('project-description').value;
+        const location = document.getElementById('project-location').value;
+        const startDate = document.getElementById('project-start-date').value;
+        const endDate = document.getElementById('project-end-date').value;
+        const executor = document.getElementById('project-executor').value;
+        const supervisor = document.getElementById('project-supervisor').value;
+
+        if (!name || !description || !location || !startDate || !endDate || !executor || !supervisor) {
+            showToast('Mohon lengkapi semua data proyek!', 'error');
+            return false;
+        }
+
+        projectData = { name, description, location, start_date: startDate, end_date: endDate, executor, supervisor };
+        saveDraft();
+        return true;
+    }
+
+    function handleAddWork() {
+        const name = document.getElementById('work-name').value;
+        const description = document.getElementById('work-description').value;
+        const location = document.getElementById('work-location').value;
+        const startDate = document.getElementById('work-start-date').value;
+        const endDate = document.getElementById('work-end-date').value;
+        const executor = document.getElementById('work-executor').value;
+        const supervisor = document.getElementById('work-supervisor').value;
+
+        if (!name || !description || !location || !startDate || !endDate || !executor || !supervisor) {
+            showToast('Mohon lengkapi data pekerjaan!', 'error');
+            return;
+        }
+
+        const tempId = Date.now().toString() + Math.random().toString(36).substr(2, 5);
+        tempWorks.push({ tempId, name, description, location, start_date: startDate, end_date: endDate, executor, supervisor });
+        document.getElementById('work-form').reset();
+        renderAddedWorks();
+        saveDraft();
+        showToast('Pekerjaan ditambahkan');
+    }
+
+    function renderAddedWorks() {
+        const container = document.getElementById('added-works-container');
+        const list = document.getElementById('added-works-list');
+
+        if (tempWorks.length === 0) {
+            container.classList.add('hidden');
+            return;
+        }
+
+        container.classList.remove('hidden');
+        list.innerHTML = tempWorks.map(w => `
+            <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200 shadow-sm animate-fadeIn">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-red-50 rounded flex items-center justify-center text-red-800">
+                        <i data-lucide="briefcase" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-900">${w.name}</p>
+                    </div>
+                </div>
+                <button onclick="removeWork('${w.tempId}')" class="text-gray-400 hover:text-red-600 transition-colors">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+            </div>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    function removeWork(tempId) {
+        delete tempActivities[tempId];
+        renderAddedWorks();
+        saveDraft();
+    }
+
+    function populateWorkSelect() {
+        const select = document.getElementById('select-work-for-activity');
+        select.innerHTML = tempWorks.map(w => `
+            <option value="${w.tempId}">${w.name}</option>
+        `).join('');
+        renderAddedActivities();
+    }
+
+    function handleAddActivity() {
+        const tempId = document.getElementById('select-work-for-activity').value;
+        const name = document.getElementById('activity-name').value;
+        const time = document.getElementById('activity-execution-time').value;
+        const executor = document.getElementById('activity-executor').value;
+
+        if (!name || !time || !executor) {
+            showToast('Mohon lengkapi data aktivitas!', 'error');
+            return;
+        }
+
+        if (!tempActivities[tempId]) tempActivities[tempId] = [];
+        tempActivities[tempId].push({ name, execution_time: time, executor, done: false });
+
+        document.getElementById('activity-form').reset();
+        renderAddedActivities();
+        saveDraft();
+        showToast('Aktivitas ditambahkan');
+    }
+
+    function renderAddedActivities() {
+        const tempId = document.getElementById('select-work-for-activity').value;
+        const container = document.getElementById('added-activities-container');
+        const list = document.getElementById('added-activities-list');
+
+        const activities = tempActivities[tempId] || [];
+
+        if (activities.length === 0) {
+            container.classList.add('hidden');
+            return;
+        }
+
+        container.classList.remove('hidden');
+        list.innerHTML = activities.map((a, index) => `
+            <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200 shadow-sm animate-fadeIn">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-green-50 rounded flex items-center justify-center text-green-600">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-900 text-sm">${a.name}</p>
+                        <p class="text-xs text-gray-500">${a.executor} • ${a.execution_time}</p>
+                    </div>
+                </div>
+                <button onclick="removeActivity('${tempId}', ${index})" class="text-gray-400 hover:text-red-600 transition-colors">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+            </div>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    function removeActivity(tempId, activityIndex) {
+        tempActivities[tempId].splice(activityIndex, 1);
+        renderAddedActivities();
+        saveDraft();
+    }
+
+    async function submitFullProject() {
+        const btnNext = document.getElementById('btn-next');
+        const originalContent = btnNext.innerHTML;
+        btnNext.disabled = true;
+        btnNext.innerHTML = '<i data-lucide="loader" class="w-5 h-5 animate-spin"></i> Memproses...';
+        lucide.createIcons();
+
+        try {
+            // 1. Create Project
+            const projectRes = await apiRequest('/projects/', {
+                method: 'POST',
+                body: JSON.stringify(projectData)
+            });
+
+            if (!projectRes.ok) {
+                let errorMsg = 'Gagal membuat proyek';
+                try {
+                    const errorData = await projectRes.json();
+                    errorMsg += `: ${errorData.error || errorData.detail || JSON.stringify(errorData)}`;
+                } catch (e) {
+                    const text = await projectRes.text();
+                    errorMsg += `: ${text.substring(0, 100)}`;
+                }
+                throw new Error(errorMsg);
+            }
+            const project = await projectRes.json();
+
+            // 2. Create Works and their Activities
+            for (const tempWork of tempWorks) {
+                const workData = { ...tempWork, project_id: project.id };
+                delete workData.tempId;
+
+                const workRes = await apiRequest('/works/', {
+                    method: 'POST',
+                    body: JSON.stringify(workData)
+                });
+
+                if (!workRes.ok) {
+                    let errorMsg = `Gagal membuat pekerjaan "${tempWork.name}"`;
+                    try {
+                        const errorData = await workRes.json();
+                        errorMsg += `: ${errorData.error || errorData.detail || JSON.stringify(errorData)}`;
+                    } catch (e) {
+                        const text = await workRes.text();
+                        errorMsg += `: ${text.substring(0, 100)}`;
+                    }
+                    throw new Error(errorMsg);
+                }
+                const work = await workRes.json();
+
+                // 3. Create Activities for this Work
+                const activities = tempActivities[tempWork.tempId] || [];
+                for (const activity of activities) {
+                    const activityData = { ...activity, work_id: work.id };
+                    const activityRes = await apiRequest('/activities/', {
+                        method: 'POST',
+                        body: JSON.stringify(activityData)
+                    });
+
+                    if (!activityRes.ok) {
+                        let errorMsg = `Gagal membuat aktivitas "${activity.name}"`;
+                        try {
+                            const errorData = await activityRes.json();
+                            errorMsg += `: ${errorData.error || errorData.detail || JSON.stringify(errorData)}`;
+                        } catch (e) {
+                            const text = await activityRes.text();
+                            errorMsg += `: ${text.substring(0, 100)}`;
+                        }
+                        throw new Error(errorMsg);
+                    }
+                }
+            }
+
+            // 4. Post to external API as requested
+            try {
+                const externalApiData = {
+                    "nama_proyek": projectData.name,
+                    "deskripsi_proyek": projectData.description,
+                    "pelaksana_proyek": projectData.executor,
+                    "supervisor_proyek": projectData.supervisor
+                };
+
+                const token = localStorage.getItem('token');
+
+                fetch('http://192.168.2.225:8000/api/projects/', {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(externalApiData)
+                }).then(res => {
+                    console.log('External API Status:', res.status);
+                }).catch(err => {
+                    console.error('External API Fetch Error:', err);
+                });
+            } catch (e) {
+                console.error('External API Logic Error:', e);
+            }
+
+            showToast('Proyek berhasil dibuat dengan semua pekerjaan dan aktivitas!', 'success');
+            clearDraft();
+            setTimeout(() => {
+                closeCreateProjectModal();
+                loadProjects();
+            }, 1000);
+        } catch (error) {
+            console.error('Submit Error:', error);
+            showToast(error.message || 'Gagal membuat proyek lengkap', 'error');
+        } finally {
+            btnNext.disabled = false;
+            btnNext.innerHTML = originalContent;
+            lucide.createIcons();
+        }
+    }
+
+    async function handleDeleteProject(id, name) {
+        if (!confirm(`Apakah Anda yakin ingin menghapus proyek "${name}"? Semua data terkait (pekerjaan & aktivitas) juga akan dihapus.`)) return;
+        try {
+            const res = await apiRequest(`/projects/${id}/`, { method: 'DELETE' });
+            if (res.ok) {
+                showToast('Proyek berhasil dihapus');
+                loadProjects();
+            } else {
+                showToast('Gagal menghapus proyek', 'error');
+            }
+        } catch (err) {
+            showToast('Terjadi kesalahan', 'error');
+        }
+    }
+
+    async function downloadPdf(id, name) {
+        try {
+            const response = await apiRequest(`/reports/project/${id}/pdf/`);
+            if (!response.ok) throw new Error('Gagal unduh PDF');
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Report_${name.replace(/\s+/g, '_')}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            showToast('Laporan PDF berhasil diunduh');
+        } catch (error) {
+            showToast('Gagal mengunduh laporan PDF', 'error');
+        }
+    }
+
+    async function downloadExcel(id, name) {
+        try {
+            const response = await apiRequest(`/reports/project/${id}/excel/`);
+            if (!response.ok) throw new Error('Gagal unduh Excel');
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Report_${name.replace(/\s+/g, '_')}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            showToast('Laporan Excel berhasil diunduh');
+        } catch (error) {
+            showToast('Gagal mengunduh laporan Excel', 'error');
+        }
+    }
+
+    async function downloadAllPdf() {
+        try {
+            const response = await apiRequest(`/reports/all/pdf/`);
+            if (!response.ok) throw new Error('Gagal unduh PDF Global');
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Global_Report_Promanage.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            showToast('Laporan PDF Global berhasil diunduh');
+        } catch (error) {
+            showToast('Gagal mengunduh laporan PDF global', 'error');
+        }
+    }
+
+    async function downloadAllExcel() {
+        try {
+            const response = await apiRequest(`/reports/all/excel/`);
+            if (!response.ok) throw new Error('Gagal unduh Excel Global');
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Global_Report_Promanage.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            showToast('Laporan Excel Global berhasil diunduh');
+        } catch (error) {
+            showToast('Gagal mengunduh laporan Excel global', 'error');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateGreeting();
+        loadProjects();
+        loadDashboardStats();
+        loadDraft();
+
+        // Auto-save as user types in any form
+        const forms = ['project-form', 'work-form', 'activity-form'];
+        forms.forEach(id => {
+            const form = document.getElementById(id);
+            if (form) form.addEventListener('input', saveDraft);
+        });
+    });
+</script>
+{% endblock %}

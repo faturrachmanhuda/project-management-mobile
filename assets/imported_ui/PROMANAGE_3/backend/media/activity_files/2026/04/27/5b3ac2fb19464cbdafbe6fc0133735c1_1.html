@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For Nola</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      text-align: center;
+      color: #333;
+      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+    }
+
+    .box {
+      background: rgba(255,255,255,0.95);
+      margin: 15px;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transition: opacity 0.5s ease;
+    }
+
+    .fade { opacity: 0; }
+
+    img {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 80px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #ff4d6d;
+      color: white;
+      width: 100%;
+    }
+
+    p {
+      text-align: left;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .dolphin {
+      position: fixed;
+      font-size: 24px;
+      opacity: 0.2;
+      animation: swim 15s linear infinite;
+    }
+
+    @keyframes swim {
+      0% { left: -50px; top: 20%; }
+      100% { left: 110%; top: 60%; }
+    }
+
+    .typewriter {
+      white-space: pre-line;
+      border-right: 2px solid #333;
+    }
+  </style>
+</head>
+<body>
+
+<div class="dolphin">🐬</div>
+<div class="dolphin" style="animation-delay:5s;">🐬</div>
+
+<div class="box" id="container">
+
+  <div id="start">
+    <img src="foto.jpg">
+    <h2>Hai Nola 🎂</h2>
+    <button onclick="next('q1')">Mulai</button>
+  </div>
+
+  <!-- ESSAY -->
+  <div id="q1" style="display:none;">
+    <p>Kapan atau dimana menurut kamu kita mulai jadi “kita”?</p>
+    <textarea></textarea>
+    <button onclick="next('q2')">Lanjut</button>
+  </div>
+
+  <div id="q2" style="display:none;">
+    <p>Kenangan kecil apa yang paling kamu inget tentang kita?</p>
+    <textarea></textarea>
+    <button onclick="next('q3')">Lanjut</button>
+  </div>
+
+  <div id="q3" style="display:none;">
+    <p>Kalau semua ini harus berhenti, bagian mana yang paling berat buat kamu?</p>
+    <textarea></textarea>
+    <button onclick="next('end')">Lanjut</button>
+  </div>
+
+  <!-- UCAPAN PANJANG -->
+  <div id="end" style="display:none;">
+    <h3>🎉 Happy Birthday 🎉</h3>
+
+    <p>
+      29 April bukan sekadar tanggal biasa. Hari ini jadi pengingat kalau kamu sudah sejauh ini jalan,
+      sudah banyak hal yang kamu lewatin, dan tetap berdiri sampai sekarang.
+    </p>
+
+    <p>
+      Aku tahu mungkin nggak semua hari kamu mudah. Ada capek, ada kecewa, ada hal yang kamu simpan sendiri.
+      Tapi kamu tetap jalan, dan itu yang bikin aku kagum sama kamu.
+    </p>
+
+    <p>
+      Aku masih inget banyak hal kecil tentang kamu.
+      Cara kamu cerita, cara kamu ketawa, cara kamu marah, sampai cara kamu diam.
+      Hal-hal yang mungkin sederhana, tapi entah kenapa selalu keinget.
+    </p>
+
+    <p>
+      Dari semua itu, aku cuma mau bilang kalau kamu itu berarti.
+      Lebih dari yang kamu kira.
+    </p>
+
+    <p>
+      Di umur kamu sekarang,
+      aku harap kamu nggak terlalu keras sama diri sendiri.
+      Nggak harus selalu kuat, nggak harus selalu sempurna.
+    </p>
+
+    <p>
+      Pelan-pelan aja.
+      Yang penting kamu tetap jalan.
+    </p>
+
+    <p>
+      Semoga kamu lebih sering bahagia.
+      Semoga yang kamu usahakan bisa tercapai.
+      Dan semoga kamu selalu punya alasan buat tetap lanjut.
+    </p>
+
+    <p>
+      Makasih ya, sudah jadi Nola yang aku kenal sampai sekarang.
+    </p>
+
+    <button onclick="startTyping()">Lanjut</button>
+  </div>
+
+  <!-- CLOSING PANJANG -->
+  <div id="closing" style="display:none;">
+    <h3>NOKUBUB 🙂</h3>
+    <p id="typing" class="typewriter"></p>
+    <button onclick="showBalloons()">🎈</button>
+  </div>
+
+</div>
+
+<script>
+let last = "";
+
+function fadeSwitch(nextId) {
+  const box = document.getElementById("container");
+  box.classList.add("fade");
+
+  setTimeout(() => {
+    document.getElementById(last || 'start').style.display = "none";
+    document.getElementById(nextId).style.display = "block";
+    last = nextId;
+    box.classList.remove("fade");
+  }, 400);
+}
+
+function next(id){ fadeSwitch(id); }
+
+/* TEXT CLOSING PANJANG */
+const text = `Kalau semua tentang kita dirangkum, mungkin ini adalah bagian akhirnya.
+
+Dari awal kita ketemu,
+dari taman tempat kita cerita panjang,
+sampai hal kecil kayak bakso aci yang jadi sederhana tapi berarti.
+
+Dari cincin dolphin yang kamu simpan,
+gelang naga yang pernah kita pakai,
+sampai panggilan “bubu dudu” yang cuma kita yang ngerti.
+
+Semua itu mungkin kecil buat orang lain,
+tapi buat aku itu cukup jadi satu dunia kecil yang pernah kita punya.
+
+Kita pernah jadi tempat pulang.
+Pernah jadi tempat cerita.
+Pernah jadi rumah satu sama lain.
+
+Tapi seiring waktu,
+jalan kita pelan-pelan berubah.
+
+Aku sempat pengen maksa semuanya tetap sama,
+tapi sekarang aku belajar buat nerima.
+
+Nerima kalau mungkin kita belum bisa sampai di titik yang sama.
+
+Aku nggak akan hapus semua tentang kamu.
+Aku simpan semuanya sebagai kenangan yang pernah hidup.
+
+Kalau suatu saat nanti kamu sudah siap,
+dan semuanya sudah lebih tenang,
+mungkin kita bisa mulai lagi dari awal.
+
+Tapi kalau tidak,
+aku tetap mau kamu bahagia, dengan jalan kamu sendiri.
+
+Terima kasih ya, Nolaa.
+Sudah pernah jadi rumah, walaupun akhirnya bukan tempat pulang.`;
+
+let i = 0;
+
+function startTyping(){
+  fadeSwitch("closing");
+  function typing(){
+    if(i < text.length){
+      document.getElementById("typing").innerHTML += text.charAt(i);
+      i++;
+      setTimeout(typing, 30);
+    }
+  }
+  typing();
+}
+
+/* BALON EMOJI */
+function showBalloons(){
+  for(let i=0;i<20;i++){
+    let b = document.createElement("div");
+    b.innerHTML = "🎈";
+    b.style.position = "fixed";
+    b.style.bottom = "-50px";
+    b.style.left = Math.random()*100 + "vw";
+    b.style.fontSize = (20 + Math.random()*20) + "px";
+    b.style.animation = "floatUp 5s linear forwards";
+    document.body.appendChild(b);
+
+    setTimeout(()=>{ b.remove(); },5000);
+  }
+}
+
+/* ANIMASI BALON */
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes floatUp {
+  0% { transform: translateY(0); opacity:1; }
+  100% { transform: translateY(-120vh); opacity:0; }
+}`;
+document.head.appendChild(style);
+
+/* MUSIK AUTO SETELAH KLIK */
+const audio = document.createElement("audio");
+audio.src = "lagu.mp3";
+audio.loop = true;
+
+document.body.addEventListener("click", function () {
+  audio.play();
+}, { once: true });
+
+</script>
+
+</body>
+</html>
