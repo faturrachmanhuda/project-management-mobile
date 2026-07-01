@@ -51,8 +51,13 @@ class ProyekService {
     developer.log('createProject(${proyek.nama})', name: 'ProyekService');
     // Send nested payload so Django can create pekerjaan+aktivitas
     final body = proyek.toJsonForServer();
-    final data = await _api.post('/api/proyek/', body)
+    final response = await _api.post('/api/proyek/', body)
         as Map<String, dynamic>;
+        
+    final data = response.containsKey('data') && response['data'] is Map 
+        ? response['data'] as Map<String, dynamic> 
+        : response;
+        
     return Proyek.fromJson(data);
   }
 
